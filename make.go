@@ -106,6 +106,7 @@ func termcss() string {
 	css.WriteString(spacing())
 	css.WriteString(border())
 	css.WriteString(sizes())
+	css.WriteString(positioning())
 
 	return css.String()
 }
@@ -392,6 +393,39 @@ func sizes() string {
 					declaration(mod+property, value),
 				}))
 			}
+		}
+	}
+
+	return css.String()
+}
+
+func positioning() string {
+	var css strings.Builder
+
+	positions := []string{"static", "fixed", "absolute", "relative", "sticky"}
+	for _, position := range positions {
+		css.WriteString(rule("."+position, []string{
+			declaration("position", position),
+		}))
+	}
+
+	displays := []string{"inline", "block", "inline-block"}
+	for _, display := range displays {
+		css.WriteString(rule("."+display, []string{
+			declaration("display", display),
+		}))
+	}
+
+	offsets := []int{0, 1, 2, 3, 4, 6, 8, 12, 20}
+	for side, property := range sides {
+		for _, offset := range offsets {
+			dim := dims[sideCombos[side]]
+			selector := fmt.Sprintf(".%s-%d", property, offset)
+			value := fmt.Sprintf("calc(var(--%s) * %d)", dim, offset)
+
+			css.WriteString(rule(selector, []string{
+				declaration(property, value),
+			}))
 		}
 	}
 

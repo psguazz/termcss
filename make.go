@@ -77,6 +77,8 @@ var cornerCombos = map[string][]string{
 var dims = map[string]string{
 	"x": "col",
 	"y": "row",
+	"h": "row",
+	"w": "col",
 }
 
 var (
@@ -370,5 +372,28 @@ func border() string {
 
 func sizes() string {
 	var css strings.Builder
+
+	sizes := []int{0, 1, 2, 4, 8, 12, 20, 32, 40, 80, 120}
+
+	rules := map[string]string{
+		"w": "width",
+		"h": "height",
+	}
+
+	mods := []string{"", "max-", "min-"}
+
+	for sel, property := range rules {
+		for _, mod := range mods {
+			for _, size := range sizes {
+				selector := fmt.Sprintf(".%s-%d", mod+sel, size)
+				value := fmt.Sprintf("calc(var(--%s) * %d)", dims[sel], size)
+
+				css.WriteString(rule(selector, []string{
+					declaration(mod+property, value),
+				}))
+			}
+		}
+	}
+
 	return css.String()
 }

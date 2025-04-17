@@ -406,6 +406,22 @@ func border() string {
 		}
 	}
 
+	for selSide, propSide := range sides {
+		combo := sideCombos[selSide]
+
+		selBase := fmt.Sprintf(".border-merge-%s", selSide)
+		selCombo := fmt.Sprintf(".border-merge-%s", combo)
+		selFull := ".border-merge"
+
+		selector := fmt.Sprintf("%s, %s, %s", selBase, selCombo, selFull)
+		space := fmt.Sprintf("calc((var(--%s) - %dpx) / 2 - var(--%s))", dims[combo], widths[""], dims[combo])
+
+		css.WriteString(rule(selector, []string{
+			declaration("margin-"+propSide, space),
+		}))
+
+	}
+
 	return css.String()
 }
 

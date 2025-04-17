@@ -9,13 +9,13 @@ import (
 func main() {
 	css := termcss()
 
-	err := os.WriteFile("layout.css", []byte(css), 0o644)
+	err := os.WriteFile("term.css", []byte(css), 0o644)
 	if err != nil {
-		fmt.Println("❌ Failed to write layout.css:", err)
+		fmt.Println("Something went wrong: ", err)
 		return
 	}
 
-	fmt.Println("✅ layout.css written successfully.")
+	fmt.Println("Done!")
 }
 
 var palette = map[string]string{
@@ -84,7 +84,7 @@ func termcss() string {
 	css.WriteString(foundation())
 	css.WriteString(typography())
 	css.WriteString(colors())
-	css.WriteString(layout())
+	css.WriteString(flex())
 	css.WriteString(spacing())
 	css.WriteString(border())
 	css.WriteString(sizes())
@@ -173,6 +173,21 @@ func typography() string {
 		}))
 
 	}
+
+	css.WriteString(rule(".font-bold", []string{
+		declaration("font-weight", "bold"),
+	}))
+	css.WriteString(rule(".font-normal", []string{
+		declaration("font-weight", "normal"),
+	}))
+
+	css.WriteString(rule(".italic", []string{
+		declaration("font-style", "italic"),
+	}))
+	css.WriteString(rule(".not-italic", []string{
+		declaration("font-style", "normal"),
+	}))
+
 	return css.String()
 }
 
@@ -193,7 +208,7 @@ func colors() string {
 	return css.String()
 }
 
-func layout() string {
+func flex() string {
 	var css strings.Builder
 
 	css.WriteString(rule(".flex-row", []string{
@@ -237,9 +252,9 @@ func spacing() string {
 					number = -size
 				}
 
-				selBase := fmt.Sprintf("%s-%d", sign+selName+selSide, number)
-				selCombo := fmt.Sprintf("%s-%d", sign+selName+combo, number)
-				selFull := fmt.Sprintf("%s-%d", sign+selName, number)
+				selBase := fmt.Sprintf(".%s-%d", sign+selName+selSide, number)
+				selCombo := fmt.Sprintf(".%s-%d", sign+selName+combo, number)
+				selFull := fmt.Sprintf(".%s-%d", sign+selName, number)
 
 				selector := fmt.Sprintf("%s, %s, %s", selBase, selCombo, selFull)
 				property := fmt.Sprintf("%s-%s", propName, propSide)

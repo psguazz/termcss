@@ -124,8 +124,8 @@ func variables() string {
 
 	css.WriteString(rule("html", []string{
 		declaration("--base-size", "13px"),
-		declaration("--col", "1rch"),
-		declaration("--row", "1rlh"),
+		declaration("--col", "calc(1rem * 0.6)"),
+		declaration("--row", "calc(1rem * 1.3)"),
 	}))
 
 	css.WriteString(rule("html", []string{

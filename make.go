@@ -150,7 +150,6 @@ func foundation() string {
 		declaration("font-family", "\"Monaco Nerd Font\""),
 		declaration("background-color", "var(--bg-dim)"),
 		declaration("color", "var(--fg)"),
-		declaration("max-width", "calc(var(--col) * 90)"),
 	}))
 
 	css.WriteString(rule("ul", []string{
@@ -306,6 +305,21 @@ func spacing() string {
 				}))
 			}
 		}
+	}
+
+	for selSide, propSide := range sides {
+		combo := sideCombos[selSide]
+
+		selBase := fmt.Sprintf(".m%s-auto", selSide)
+		selCombo := fmt.Sprintf(".m%s-auto", combo)
+		selFull := ".m-auto"
+
+		selector := fmt.Sprintf("%s, %s, %s", selBase, selCombo, selFull)
+		property := fmt.Sprintf("margin-%s", propSide)
+
+		css.WriteString(rule(selector, []string{
+			declaration(property, "auto"),
+		}))
 	}
 
 	return css.String()

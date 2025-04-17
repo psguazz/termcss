@@ -331,16 +331,37 @@ func border() string {
 	var css strings.Builder
 
 	radiuses := []int{0, 4}
-	widths := []int{0, 2}
 	styles := []string{"solid", "dashed"}
+	widths := map[string]int{"": 2, "-0": 0}
 
 	for selSide, propSide := range sides {
 		combo := sideCombos[selSide]
 
+		for selWidth, width := range widths {
+			selBase := fmt.Sprintf(".border-%s%s", selSide, selWidth)
+			selCombo := fmt.Sprintf(".border-%s%s", combo, selWidth)
+			selFull := fmt.Sprintf(".border%s", selWidth)
+
+			selector := fmt.Sprintf("%s, %s, %s", selBase, selCombo, selFull)
+			property := fmt.Sprintf("border-%s", propSide)
+			value := fmt.Sprintf("%dpx solid var(--grey-dim)", width)
+
+			space := fmt.Sprintf("calc((var(--%s) - %dpx) / 2)", dims[combo], width)
+			if width == 0 {
+				space = "0"
+			}
+
+			css.WriteString(rule(selector, []string{
+				declaration(property, value),
+				declaration("margin-"+propSide, space),
+				declaration("padding-"+propSide, space),
+			}))
+		}
+
 		for color := range palette {
-			selBase := fmt.Sprintf(".b-%s-%s", selSide, color)
-			selCombo := fmt.Sprintf(".b-%s-%s", combo, color)
-			selFull := fmt.Sprintf(".b-%s", color)
+			selBase := fmt.Sprintf(".border-%s-%s", selSide, color)
+			selCombo := fmt.Sprintf(".border-%s-%s", combo, color)
+			selFull := fmt.Sprintf(".border-%s", color)
 
 			selector := fmt.Sprintf("%s, %s, %s", selBase, selCombo, selFull)
 			property := fmt.Sprintf("border-%s-color", propSide)
@@ -352,36 +373,15 @@ func border() string {
 		}
 
 		for _, style := range styles {
-			selBase := fmt.Sprintf(".b-%s-%s", selSide, style)
-			selCombo := fmt.Sprintf(".b-%s-%s", combo, style)
-			selFull := fmt.Sprintf(".b-%s", style)
+			selBase := fmt.Sprintf(".border-%s-%s", selSide, style)
+			selCombo := fmt.Sprintf(".border-%s-%s", combo, style)
+			selFull := fmt.Sprintf(".border-%s", style)
 
 			selector := fmt.Sprintf("%s, %s, %s", selBase, selCombo, selFull)
 			property := fmt.Sprintf("border-%s-style", propSide)
 
 			css.WriteString(rule(selector, []string{
 				declaration(property, style),
-			}))
-		}
-
-		for _, width := range widths {
-			selBase := fmt.Sprintf(".b-%s-%d", selSide, width)
-			selCombo := fmt.Sprintf(".b-%s-%d", combo, width)
-			selFull := fmt.Sprintf(".b-%d", width)
-
-			selector := fmt.Sprintf("%s, %s, %s", selBase, selCombo, selFull)
-			property := fmt.Sprintf("border-%s", propSide)
-			value := fmt.Sprintf("%dpx solid var(--grey)", width)
-
-			space := fmt.Sprintf("calc((var(--%s) - 2px) / 2)", dims[combo])
-			if width == 0 {
-				space = "0"
-			}
-
-			css.WriteString(rule(selector, []string{
-				declaration(property, value),
-				declaration("margin-"+propSide, space),
-				declaration("padding-"+propSide, space),
 			}))
 		}
 	}

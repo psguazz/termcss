@@ -82,9 +82,11 @@ var dims = map[string]string{
 }
 
 var (
-	positiveSpaces = []int{0, 1, 2}
+	positiveSpaces = []int{0, 1, 2, 4}
 	negativeSpaces = []int{-2, -1}
 )
+
+var sizes = []int{0, 1, 2, 4, 8, 12, 20, 32, 40, 80, 100, 120}
 
 func declaration(property, value string) string {
 	return fmt.Sprintf("%s: %s;", property, value)
@@ -105,7 +107,7 @@ func termcss() string {
 	css.WriteString(flex())
 	css.WriteString(spacing())
 	css.WriteString(border())
-	css.WriteString(sizes())
+	css.WriteString(sizing())
 	css.WriteString(positioning())
 
 	return css.String()
@@ -123,9 +125,9 @@ func variables() string {
 	css.WriteString(rule("html", colors))
 
 	css.WriteString(rule("html", []string{
-		declaration("--base-size", "13px"),
+		declaration("--base-size", "14px"),
 		declaration("--col", "calc(1rem * 0.6)"),
-		declaration("--row", "calc(1rem * 1.3)"),
+		declaration("--row", "calc(1rem * 1.35)"),
 	}))
 
 	css.WriteString(rule("html", []string{
@@ -208,7 +210,7 @@ func typography() string {
 
 	transforms := []string{"uppercase", "lowercase", "capitalize"}
 	for _, transform := range transforms {
-		css.WriteString(rule(transform, []string{
+		css.WriteString(rule("."+transform, []string{
 			declaration("text-transform", transform),
 		}))
 	}
@@ -407,10 +409,8 @@ func border() string {
 	return css.String()
 }
 
-func sizes() string {
+func sizing() string {
 	var css strings.Builder
-
-	sizes := []int{0, 1, 2, 4, 8, 12, 20, 32, 40, 80, 120}
 
 	rules := map[string]string{
 		"w": "width",

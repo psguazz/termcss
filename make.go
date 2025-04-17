@@ -429,5 +429,26 @@ func positioning() string {
 		}
 	}
 
+	visibilities := []string{"visible", "hidden"}
+	for _, visibility := range visibilities {
+		css.WriteString(rule("."+visibility, []string{
+			declaration("visibility", visibility),
+		}))
+	}
+
+	overflows := []string{"auto", "hidden", "visible", "scroll"}
+	for _, overflow := range overflows {
+		css.WriteString(rule(".overflow-"+overflow, []string{
+			declaration("overflow", overflow),
+		}))
+	}
+
+	zIndexes := []string{"1", "10", "100", "1000"}
+	for _, zIndex := range zIndexes {
+		css.WriteString(rule(".z-"+zIndex, []string{
+			declaration("z-index", zIndex),
+		}))
+	}
+
 	return css.String()
 }

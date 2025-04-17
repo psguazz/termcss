@@ -207,6 +207,17 @@ func typography() string {
 		}))
 	}
 
+	transforms := []string{"uppercase", "lowercase", "capitalize"}
+	for _, transform := range transforms {
+		css.WriteString(rule(transform, []string{
+			declaration("text-transform", transform),
+		}))
+	}
+
+	css.WriteString(rule(".normal-case", []string{
+		declaration("text-transform", "none"),
+	}))
+
 	css.WriteString(rule(".italic", []string{
 		declaration("font-style", "italic"),
 	}))
@@ -249,6 +260,10 @@ func flex() string {
 
 	css.WriteString(rule(".grow", []string{
 		declaration("flex-grow", "1"),
+	}))
+
+	css.WriteString(rule(".shrink", []string{
+		declaration("flex-shrink", "1"),
 	}))
 
 	return css.String()

@@ -18,6 +18,56 @@ func main() {
 	fmt.Println("✅ layout.css written successfully.")
 }
 
+var palette = map[string]string{
+	"bg0":         "#2c2e34",
+	"bg1":         "#33353f",
+	"bg2":         "#363944",
+	"bg3":         "#3b3e48",
+	"bg4":         "#414550",
+	"bg-blue":     "#85d3f2",
+	"bg-dim":      "#222327",
+	"bg-green":    "#a7df78",
+	"bg-red":      "#ff6077",
+	"black":       "#181819",
+	"blue":        "#76cce0",
+	"diff-blue":   "#354157",
+	"diff-green":  "#394634",
+	"diff-red":    "#55393d",
+	"diff-yellow": "#4e432f",
+	"fg":          "#e2e2e3",
+	"green":       "#9ed072",
+	"grey":        "#7f8490",
+	"grey-dim":    "#595f6f",
+	"orange":      "#f39660",
+	"purple":      "#b39df3",
+	"red":         "#fc5d7c",
+	"yellow":      "#e7c664",
+}
+
+var sides = map[string]string{
+	"t": "top",
+	"b": "bottom",
+	"l": "left",
+	"r": "right",
+}
+
+var combos = map[string]string{
+	"t": "y",
+	"b": "y",
+	"l": "x",
+	"r": "x",
+}
+
+var dims = map[string]string{
+	"x": "col",
+	"y": "row",
+}
+
+var (
+	positiveSpaces = []int{0, 1, 2}
+	negativeSpaces = []int{-2, -1}
+)
+
 func declaration(property, value string) string {
 	return fmt.Sprintf("%s: %s;", property, value)
 }
@@ -45,31 +95,13 @@ func termcss() string {
 func variables() string {
 	var css strings.Builder
 
-	css.WriteString(rule("html", []string{
-		declaration("--bg0", "#2c2e34"),
-		declaration("--bg1", "#33353f"),
-		declaration("--bg2", "#363944"),
-		declaration("--bg3", "#3b3e48"),
-		declaration("--bg4", "#414550"),
-		declaration("--bg-blue", "#85d3f2"),
-		declaration("--bg-dim", "#222327"),
-		declaration("--bg-green", "#a7df78"),
-		declaration("--bg-red", "#ff6077"),
-		declaration("--black", "#181819"),
-		declaration("--blue", "#76cce0"),
-		declaration("--diff-blue", "#354157"),
-		declaration("--diff-green", "#394634"),
-		declaration("--diff-red", "#55393d"),
-		declaration("--diff-yellow", "#4e432f"),
-		declaration("--fg", "#e2e2e3"),
-		declaration("--green", "#9ed072"),
-		declaration("--grey", "#7f8490"),
-		declaration("--grey-dim", "#595f6f"),
-		declaration("--orange", "#f39660"),
-		declaration("--purple", "#b39df3"),
-		declaration("--red", "#fc5d7c"),
-		declaration("--yellow", "#e7c664"),
-	}))
+	var colors []string
+	for name, hex := range palette {
+		colorVar := declaration("--"+name, hex)
+		colors = append(colors, colorVar)
+	}
+
+	css.WriteString(rule("html", colors))
 
 	css.WriteString(rule("html", []string{
 		declaration("--base-size", "13px"),
@@ -147,39 +179,13 @@ func typography() string {
 func colors() string {
 	var css strings.Builder
 
-	cols := []string{
-		"bg0",
-		"bg1",
-		"bg2",
-		"bg3",
-		"bg4",
-		"bg-blue",
-		"bg-dim",
-		"bg-green",
-		"bg-red",
-		"black",
-		"blue",
-		"diff-blue",
-		"diff-green",
-		"diff-red",
-		"diff-yellow",
-		"fg",
-		"green",
-		"grey",
-		"grey-dim",
-		"orange",
-		"purple",
-		"red",
-		"yellow",
-	}
-
-	for _, color := range cols {
-		css.WriteString(rule(fmt.Sprintf(".text-%s", color), []string{
-			declaration("color", fmt.Sprintf("var(--%s)", color)),
+	for name := range palette {
+		css.WriteString(rule(fmt.Sprintf(".text-%s", name), []string{
+			declaration("color", fmt.Sprintf("var(--%s)", name)),
 		}))
 
-		css.WriteString(rule(fmt.Sprintf(".bg-%s", color), []string{
-			declaration("background-color", fmt.Sprintf("var(--%s)", color)),
+		css.WriteString(rule(fmt.Sprintf(".bg-%s", name), []string{
+			declaration("background-color", fmt.Sprintf("var(--%s)", name)),
 		}))
 
 	}
@@ -216,27 +222,8 @@ func spacing() string {
 	}
 
 	sizes := map[string][]int{
-		"p": {0, 1, 2},
-		"m": {-2, -1, 0, 1, 2},
-	}
-
-	sides := map[string]string{
-		"t": "top",
-		"b": "bottom",
-		"l": "left",
-		"r": "right",
-	}
-
-	combos := map[string]string{
-		"t": "y",
-		"b": "y",
-		"l": "x",
-		"r": "x",
-	}
-
-	dims := map[string]string{
-		"x": "col",
-		"y": "row",
+		"p": positiveSpaces,
+		"m": append(negativeSpaces, positiveSpaces...),
 	}
 
 	for selName, propName := range spaces {

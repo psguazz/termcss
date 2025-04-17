@@ -193,12 +193,19 @@ func typography() string {
 
 	}
 
-	css.WriteString(rule(".font-bold", []string{
-		declaration("font-weight", "bold"),
-	}))
-	css.WriteString(rule(".font-normal", []string{
-		declaration("font-weight", "normal"),
-	}))
+	whitespaces := []string{"normal", "nowrap"}
+	for _, whitespace := range whitespaces {
+		css.WriteString(rule(".whitespace-"+whitespace, []string{
+			declaration("white-space", whitespace),
+		}))
+	}
+
+	weights := []string{"normal", "bold"}
+	for _, weight := range weights {
+		css.WriteString(rule(".font-"+weight, []string{
+			declaration("font-weight", weight),
+		}))
+	}
 
 	css.WriteString(rule(".italic", []string{
 		declaration("font-style", "italic"),

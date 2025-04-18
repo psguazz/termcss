@@ -149,7 +149,7 @@ func foundation() string {
 		declaration("color", "inherit"),
 		declaration("background-color", "inherit"),
 		declaration("font-family", "inherit"),
-		declaration("box-sizing", "border-box"),
+		declaration("box-sizing", "content-box"),
 	}))
 
 	css.WriteString(rule("body", []string{

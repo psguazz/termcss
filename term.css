@@ -1,29 +1,36 @@
+/* VARIABLES
+ * ====================
+ * Setting up some variables used throughout the styles:
+ * - All the colors. These come from Sonokai because it's awesome.
+ * - Font size, line height, row width. The Grid.
+ */
+
 html {
-  --diff-yellow: #4e432f;
-  --inherit: inherit;
-  --bg3: #3b3e48;
-  --black: #181819;
-  --diff-green: #394634;
-  --green: #9ed072;
+  --fg: #e2e2e3;
   --grey-dim: #595f6f;
   --orange: #f39660;
-  --purple: #b39df3;
   --red: #fc5d7c;
-  --bg0: #2c2e34;
-  --bg1: #33353f;
+  --transparent: transparent;
+  --diff-red: #55393d;
+  --diff-yellow: #4e432f;
+  --yellow: #e7c664;
+  --inherit: inherit;
   --bg4: #414550;
+  --bg-red: #ff6077;
   --blue: #76cce0;
   --diff-blue: #354157;
-  --yellow: #e7c664;
-  --transparent: transparent;
-  --bg2: #363944;
-  --bg-red: #ff6077;
-  --fg: #e2e2e3;
+  --diff-green: #394634;
   --grey: #7f8490;
+  --purple: #b39df3;
+  --bg0: #2c2e34;
+  --bg1: #33353f;
+  --bg3: #3b3e48;
   --bg-blue: #85d3f2;
   --bg-dim: #222327;
   --bg-green: #a7df78;
-  --diff-red: #55393d;
+  --black: #181819;
+  --green: #9ed072;
+  --bg2: #363944;
 }
 
 html {
@@ -37,13 +44,20 @@ html {
   line-height: var(--row);
 }
 
+/* FOUNDATION
+ * ====================
+ * Some default properties that allow us to apply the theme and guarantee grid alignment.
+ * - The list elements are a bit opinionated.
+ * - We _need_ `content-box` to enforce the grid when applying widths and heights to items with borders
+ */
+
 *, *::before, *::after {
   padding: 0;
   margin: 0;
   border: 0;
   font-size: inherit;
   color: inherit;
-  background-color: inherit;
+  background-color: none;
   font-family: inherit;
   box-sizing: content-box;
 }
@@ -71,10 +85,12 @@ li:before {
   color: var(--grey);
 }
 
-.text-0\.5 {
-  font-size: calc(var(--base-size) * 0.5);
-  line-height: calc(var(--row) * 1);
-}
+/* TYPOGRAPHY
+ * ====================
+ * Basic text transofrmations: weight, style, whitespace, case.
+ * Size is also an option. It's definitely cheating a bit, since terminals don't have that luxury,
+ * but it's nice to have and is still guaranteed to be aligned.
+ */
 
 .text-1 {
   font-size: calc(var(--base-size) * 1);
@@ -131,6 +147,139 @@ li:before {
   font-style: normal;
 }
 
+/* COLORS
+ * ====================
+ * Utilities to apply the theme colors to text and background.
+ */
+
+.text-red {
+  color: var(--red);
+}
+
+.bg-red {
+  background-color: var(--red);
+}
+
+.text-transparent {
+  color: var(--transparent);
+}
+
+.bg-transparent {
+  background-color: var(--transparent);
+}
+
+.text-diff-red {
+  color: var(--diff-red);
+}
+
+.bg-diff-red {
+  background-color: var(--diff-red);
+}
+
+.text-diff-yellow {
+  color: var(--diff-yellow);
+}
+
+.bg-diff-yellow {
+  background-color: var(--diff-yellow);
+}
+
+.text-yellow {
+  color: var(--yellow);
+}
+
+.bg-yellow {
+  background-color: var(--yellow);
+}
+
+.text-inherit {
+  color: var(--inherit);
+}
+
+.bg-inherit {
+  background-color: var(--inherit);
+}
+
+.text-bg4 {
+  color: var(--bg4);
+}
+
+.bg-bg4 {
+  background-color: var(--bg4);
+}
+
+.text-bg-red {
+  color: var(--bg-red);
+}
+
+.bg-bg-red {
+  background-color: var(--bg-red);
+}
+
+.text-blue {
+  color: var(--blue);
+}
+
+.bg-blue {
+  background-color: var(--blue);
+}
+
+.text-diff-blue {
+  color: var(--diff-blue);
+}
+
+.bg-diff-blue {
+  background-color: var(--diff-blue);
+}
+
+.text-diff-green {
+  color: var(--diff-green);
+}
+
+.bg-diff-green {
+  background-color: var(--diff-green);
+}
+
+.text-grey {
+  color: var(--grey);
+}
+
+.bg-grey {
+  background-color: var(--grey);
+}
+
+.text-purple {
+  color: var(--purple);
+}
+
+.bg-purple {
+  background-color: var(--purple);
+}
+
+.text-bg0 {
+  color: var(--bg0);
+}
+
+.bg-bg0 {
+  background-color: var(--bg0);
+}
+
+.text-bg1 {
+  color: var(--bg1);
+}
+
+.bg-bg1 {
+  background-color: var(--bg1);
+}
+
+.text-bg3 {
+  color: var(--bg3);
+}
+
+.bg-bg3 {
+  background-color: var(--bg3);
+}
+
 .text-bg-blue {
   color: var(--bg-blue);
 }
@@ -155,38 +304,6 @@ li:before {
   background-color: var(--bg-green);
 }
 
-.text-diff-red {
-  color: var(--diff-red);
-}
-
-.bg-diff-red {
-  background-color: var(--diff-red);
-}
-
-.text-diff-yellow {
-  color: var(--diff-yellow);
-}
-
-.bg-diff-yellow {
-  background-color: var(--diff-yellow);
-}
-
-.text-inherit {
-  color: var(--inherit);
-}
-
-.bg-inherit {
-  background-color: var(--inherit);
-}
-
-.text-bg3 {
-  color: var(--bg3);
-}
-
-.bg-bg3 {
-  background-color: var(--bg3);
-}
-
 .text-black {
   color: var(--black);
 }
@@ -195,20 +312,28 @@ li:before {
   background-color: var(--black);
 }
 
-.text-diff-green {
-  color: var(--diff-green);
-}
-
-.bg-diff-green {
-  background-color: var(--diff-green);
-}
-
 .text-green {
   color: var(--green);
 }
 
 .bg-green {
   background-color: var(--green);
+}
+
+.text-bg2 {
+  color: var(--bg2);
+}
+
+.bg-bg2 {
+  background-color: var(--bg2);
+}
+
+.text-fg {
+  color: var(--fg);
+}
+
+.bg-fg {
+  background-color: var(--fg);
 }
 
 .text-grey-dim {
@@ -227,109 +352,11 @@ li:before {
   background-color: var(--orange);
 }
 
-.text-purple {
-  color: var(--purple);
-}
-
-.bg-purple {
-  background-color: var(--purple);
-}
-
-.text-red {
-  color: var(--red);
-}
-
-.bg-red {
-  background-color: var(--red);
-}
-
-.text-bg0 {
-  color: var(--bg0);
-}
-
-.bg-bg0 {
-  background-color: var(--bg0);
-}
-
-.text-bg1 {
-  color: var(--bg1);
-}
-
-.bg-bg1 {
-  background-color: var(--bg1);
-}
-
-.text-bg4 {
-  color: var(--bg4);
-}
-
-.bg-bg4 {
-  background-color: var(--bg4);
-}
-
-.text-blue {
-  color: var(--blue);
-}
-
-.bg-blue {
-  background-color: var(--blue);
-}
-
-.text-diff-blue {
-  color: var(--diff-blue);
-}
-
-.bg-diff-blue {
-  background-color: var(--diff-blue);
-}
-
-.text-yellow {
-  color: var(--yellow);
-}
-
-.bg-yellow {
-  background-color: var(--yellow);
-}
-
-.text-transparent {
-  color: var(--transparent);
-}
-
-.bg-transparent {
-  background-color: var(--transparent);
-}
-
-.text-bg2 {
-  color: var(--bg2);
-}
-
-.bg-bg2 {
-  background-color: var(--bg2);
-}
-
-.text-bg-red {
-  color: var(--bg-red);
-}
-
-.bg-bg-red {
-  background-color: var(--bg-red);
-}
-
-.text-fg {
-  color: var(--fg);
-}
-
-.bg-fg {
-  background-color: var(--fg);
-}
-
-.text-grey {
-  color: var(--grey);
-}
-
-.bg-grey {
-  background-color: var(--grey);
-}
+/* FLEX
+ * ====================
+ * Flex-related utilities. Still WIP.
+ * Note that some things like `justify-between will not be available unless they can be guaranteed to _always_ respect the grid.
+ */
 
 .flex-row {
   display: flex;
@@ -348,6 +375,13 @@ li:before {
 .shrink {
   flex-shrink: 1;
 }
+
+/* MARGIN & PADDING
+ * ====================
+ * Applying margin and padding -- specific sides, x and y, all sides.
+ * All the sizes are grid-aligned.
+ * Margins are also negative.
+ */
 
 .pt-0, .py-0, .p-0 {
   padding-top: calc(var(--row) * 0);
@@ -413,6 +447,10 @@ li:before {
   padding-right: calc(var(--col) * 4);
 }
 
+.-mr-2, .-mx-2, .-m-2 {
+  margin-right: calc(var(--col) * -2);
+}
+
 .-mt-2, .-my-2, .-m-2 {
   margin-top: calc(var(--row) * -2);
 }
@@ -423,10 +461,6 @@ li:before {
 
 .-ml-2, .-mx-2, .-m-2 {
   margin-left: calc(var(--col) * -2);
-}
-
-.-mr-2, .-mx-2, .-m-2 {
-  margin-right: calc(var(--col) * -2);
 }
 
 .-mt-1, .-my-1, .-m-1 {
@@ -445,6 +479,10 @@ li:before {
   margin-right: calc(var(--col) * -1);
 }
 
+.mr-0, .mx-0, .m-0 {
+  margin-right: calc(var(--col) * 0);
+}
+
 .mt-0, .my-0, .m-0 {
   margin-top: calc(var(--row) * 0);
 }
@@ -457,8 +495,12 @@ li:before {
   margin-left: calc(var(--col) * 0);
 }
 
-.mr-0, .mx-0, .m-0 {
-  margin-right: calc(var(--col) * 0);
+.ml-1, .mx-1, .m-1 {
+  margin-left: calc(var(--col) * 1);
+}
+
+.mr-1, .mx-1, .m-1 {
+  margin-right: calc(var(--col) * 1);
 }
 
 .mt-1, .my-1, .m-1 {
@@ -467,14 +509,6 @@ li:before {
 
 .mb-1, .my-1, .m-1 {
   margin-bottom: calc(var(--row) * 1);
-}
-
-.ml-1, .mx-1, .m-1 {
-  margin-left: calc(var(--col) * 1);
-}
-
-.mr-1, .mx-1, .m-1 {
-  margin-right: calc(var(--col) * 1);
 }
 
 .mt-2, .my-2, .m-2 {
@@ -509,6 +543,13 @@ li:before {
   margin-right: calc(var(--col) * 4);
 }
 
+/* MARGIN AUTO
+ * ====================
+ * This is incuded for the sake of creating decent page layouts.
+ * It's fine to use this on the root element, but anywhere else
+ * it might break the grid.
+ */
+
 .mt-auto, .my-auto, .m-auto {
   margin-top: auto;
 }
@@ -525,124 +566,22 @@ li:before {
   margin-right: auto;
 }
 
-.border-t, .border-y, .border {
-  border-top: 2px solid var(--grey-dim);
-  margin-top: calc((var(--row) - 2px) / 2);
-  padding-top: calc((var(--row) - 2px) / 2);
-}
+/* BORDERS
+ * ====================
+ * Applying borders -- specific sides, x and y, all sides.
+ * Colors, style, and radius can be changed.
+ * The border width cannot be chosen; it's just yes or no.
+ * Borders are applied along with a specific combination of margin and padding so that
+ * they take a full extra row/column and remain aligned grid.
+ * These half-paddings are the reason we need `content-box`.
+ * Borders are defined _after_ margins and paddings, meaning that a bordered item cannot have additional margin or padding.
+ * This is, again, to enforce grid alignment at all times
+ */
 
-.border-t-0, .border-y-0, .border-0 {
-  border-top: 0px solid var(--grey-dim);
-  margin-top: 0;
-  padding-top: 0;
-}
-
-.border-t-bg-red, .border-y-bg-red, .border-bg-red {
-  border-top-color: var(--bg-red);
-}
-
-.border-t-fg, .border-y-fg, .border-fg {
-  border-top-color: var(--fg);
-}
-
-.border-t-grey, .border-y-grey, .border-grey {
-  border-top-color: var(--grey);
-}
-
-.border-t-bg-blue, .border-y-bg-blue, .border-bg-blue {
-  border-top-color: var(--bg-blue);
-}
-
-.border-t-bg-dim, .border-y-bg-dim, .border-bg-dim {
-  border-top-color: var(--bg-dim);
-}
-
-.border-t-bg-green, .border-y-bg-green, .border-bg-green {
-  border-top-color: var(--bg-green);
-}
-
-.border-t-diff-red, .border-y-diff-red, .border-diff-red {
-  border-top-color: var(--diff-red);
-}
-
-.border-t-diff-yellow, .border-y-diff-yellow, .border-diff-yellow {
-  border-top-color: var(--diff-yellow);
-}
-
-.border-t-inherit, .border-y-inherit, .border-inherit {
-  border-top-color: var(--inherit);
-}
-
-.border-t-bg3, .border-y-bg3, .border-bg3 {
-  border-top-color: var(--bg3);
-}
-
-.border-t-black, .border-y-black, .border-black {
-  border-top-color: var(--black);
-}
-
-.border-t-diff-green, .border-y-diff-green, .border-diff-green {
-  border-top-color: var(--diff-green);
-}
-
-.border-t-green, .border-y-green, .border-green {
-  border-top-color: var(--green);
-}
-
-.border-t-grey-dim, .border-y-grey-dim, .border-grey-dim {
-  border-top-color: var(--grey-dim);
-}
-
-.border-t-orange, .border-y-orange, .border-orange {
-  border-top-color: var(--orange);
-}
-
-.border-t-purple, .border-y-purple, .border-purple {
-  border-top-color: var(--purple);
-}
-
-.border-t-red, .border-y-red, .border-red {
-  border-top-color: var(--red);
-}
-
-.border-t-bg0, .border-y-bg0, .border-bg0 {
-  border-top-color: var(--bg0);
-}
-
-.border-t-bg1, .border-y-bg1, .border-bg1 {
-  border-top-color: var(--bg1);
-}
-
-.border-t-bg4, .border-y-bg4, .border-bg4 {
-  border-top-color: var(--bg4);
-}
-
-.border-t-blue, .border-y-blue, .border-blue {
-  border-top-color: var(--blue);
-}
-
-.border-t-diff-blue, .border-y-diff-blue, .border-diff-blue {
-  border-top-color: var(--diff-blue);
-}
-
-.border-t-yellow, .border-y-yellow, .border-yellow {
-  border-top-color: var(--yellow);
-}
-
-.border-t-transparent, .border-y-transparent, .border-transparent {
-  border-top-color: var(--transparent);
-}
-
-.border-t-bg2, .border-y-bg2, .border-bg2 {
-  border-top-color: var(--bg2);
-}
-
-.border-t-solid, .border-y-solid, .border-solid {
-  border-top-style: solid;
-}
-
-.border-t-dashed, .border-y-dashed, .border-dashed {
-  border-top-style: dashed;
+.border-b, .border-y, .border {
+  border-bottom: 2px solid var(--grey-dim);
+  margin-bottom: calc((var(--row) - 2px) / 2);
+  padding-bottom: calc((var(--row) - 2px) / 2);
 }
 
 .border-b-0, .border-y-0, .border-0 {
@@ -651,54 +590,36 @@ li:before {
   padding-bottom: 0;
 }
 
-.border-b, .border-y, .border {
-  border-bottom: 2px solid var(--grey-dim);
-  margin-bottom: calc((var(--row) - 2px) / 2);
-  padding-bottom: calc((var(--row) - 2px) / 2);
-}
-
-.border-b-bg3, .border-y-bg3, .border-bg3 {
-  border-bottom-color: var(--bg3);
-}
-
-.border-b-black, .border-y-black, .border-black {
-  border-bottom-color: var(--black);
-}
-
-.border-b-diff-green, .border-y-diff-green, .border-diff-green {
-  border-bottom-color: var(--diff-green);
-}
-
-.border-b-green, .border-y-green, .border-green {
-  border-bottom-color: var(--green);
-}
-
-.border-b-grey-dim, .border-y-grey-dim, .border-grey-dim {
-  border-bottom-color: var(--grey-dim);
-}
-
-.border-b-orange, .border-y-orange, .border-orange {
-  border-bottom-color: var(--orange);
-}
-
-.border-b-purple, .border-y-purple, .border-purple {
-  border-bottom-color: var(--purple);
-}
-
 .border-b-red, .border-y-red, .border-red {
   border-bottom-color: var(--red);
 }
 
-.border-b-bg0, .border-y-bg0, .border-bg0 {
-  border-bottom-color: var(--bg0);
+.border-b-transparent, .border-y-transparent, .border-transparent {
+  border-bottom-color: var(--transparent);
 }
 
-.border-b-bg1, .border-y-bg1, .border-bg1 {
-  border-bottom-color: var(--bg1);
+.border-b-diff-red, .border-y-diff-red, .border-diff-red {
+  border-bottom-color: var(--diff-red);
+}
+
+.border-b-diff-yellow, .border-y-diff-yellow, .border-diff-yellow {
+  border-bottom-color: var(--diff-yellow);
+}
+
+.border-b-yellow, .border-y-yellow, .border-yellow {
+  border-bottom-color: var(--yellow);
+}
+
+.border-b-inherit, .border-y-inherit, .border-inherit {
+  border-bottom-color: var(--inherit);
 }
 
 .border-b-bg4, .border-y-bg4, .border-bg4 {
   border-bottom-color: var(--bg4);
+}
+
+.border-b-bg-red, .border-y-bg-red, .border-bg-red {
+  border-bottom-color: var(--bg-red);
 }
 
 .border-b-blue, .border-y-blue, .border-blue {
@@ -709,28 +630,28 @@ li:before {
   border-bottom-color: var(--diff-blue);
 }
 
-.border-b-yellow, .border-y-yellow, .border-yellow {
-  border-bottom-color: var(--yellow);
-}
-
-.border-b-transparent, .border-y-transparent, .border-transparent {
-  border-bottom-color: var(--transparent);
-}
-
-.border-b-bg2, .border-y-bg2, .border-bg2 {
-  border-bottom-color: var(--bg2);
-}
-
-.border-b-bg-red, .border-y-bg-red, .border-bg-red {
-  border-bottom-color: var(--bg-red);
-}
-
-.border-b-fg, .border-y-fg, .border-fg {
-  border-bottom-color: var(--fg);
+.border-b-diff-green, .border-y-diff-green, .border-diff-green {
+  border-bottom-color: var(--diff-green);
 }
 
 .border-b-grey, .border-y-grey, .border-grey {
   border-bottom-color: var(--grey);
+}
+
+.border-b-purple, .border-y-purple, .border-purple {
+  border-bottom-color: var(--purple);
+}
+
+.border-b-bg0, .border-y-bg0, .border-bg0 {
+  border-bottom-color: var(--bg0);
+}
+
+.border-b-bg1, .border-y-bg1, .border-bg1 {
+  border-bottom-color: var(--bg1);
+}
+
+.border-b-bg3, .border-y-bg3, .border-bg3 {
+  border-bottom-color: var(--bg3);
 }
 
 .border-b-bg-blue, .border-y-bg-blue, .border-bg-blue {
@@ -745,16 +666,28 @@ li:before {
   border-bottom-color: var(--bg-green);
 }
 
-.border-b-diff-red, .border-y-diff-red, .border-diff-red {
-  border-bottom-color: var(--diff-red);
+.border-b-black, .border-y-black, .border-black {
+  border-bottom-color: var(--black);
 }
 
-.border-b-diff-yellow, .border-y-diff-yellow, .border-diff-yellow {
-  border-bottom-color: var(--diff-yellow);
+.border-b-green, .border-y-green, .border-green {
+  border-bottom-color: var(--green);
 }
 
-.border-b-inherit, .border-y-inherit, .border-inherit {
-  border-bottom-color: var(--inherit);
+.border-b-bg2, .border-y-bg2, .border-bg2 {
+  border-bottom-color: var(--bg2);
+}
+
+.border-b-fg, .border-y-fg, .border-fg {
+  border-bottom-color: var(--fg);
+}
+
+.border-b-grey-dim, .border-y-grey-dim, .border-grey-dim {
+  border-bottom-color: var(--grey-dim);
+}
+
+.border-b-orange, .border-y-orange, .border-orange {
+  border-bottom-color: var(--orange);
 }
 
 .border-b-solid, .border-y-solid, .border-solid {
@@ -777,36 +710,24 @@ li:before {
   padding-left: 0;
 }
 
-.border-l-bg3, .border-x-bg3, .border-bg3 {
-  border-left-color: var(--bg3);
+.border-l-blue, .border-x-blue, .border-blue {
+  border-left-color: var(--blue);
 }
 
-.border-l-black, .border-x-black, .border-black {
-  border-left-color: var(--black);
+.border-l-diff-blue, .border-x-diff-blue, .border-diff-blue {
+  border-left-color: var(--diff-blue);
 }
 
 .border-l-diff-green, .border-x-diff-green, .border-diff-green {
   border-left-color: var(--diff-green);
 }
 
-.border-l-green, .border-x-green, .border-green {
-  border-left-color: var(--green);
-}
-
-.border-l-grey-dim, .border-x-grey-dim, .border-grey-dim {
-  border-left-color: var(--grey-dim);
-}
-
-.border-l-orange, .border-x-orange, .border-orange {
-  border-left-color: var(--orange);
+.border-l-grey, .border-x-grey, .border-grey {
+  border-left-color: var(--grey);
 }
 
 .border-l-purple, .border-x-purple, .border-purple {
   border-left-color: var(--purple);
-}
-
-.border-l-red, .border-x-red, .border-red {
-  border-left-color: var(--red);
 }
 
 .border-l-bg0, .border-x-bg0, .border-bg0 {
@@ -817,40 +738,8 @@ li:before {
   border-left-color: var(--bg1);
 }
 
-.border-l-bg4, .border-x-bg4, .border-bg4 {
-  border-left-color: var(--bg4);
-}
-
-.border-l-blue, .border-x-blue, .border-blue {
-  border-left-color: var(--blue);
-}
-
-.border-l-diff-blue, .border-x-diff-blue, .border-diff-blue {
-  border-left-color: var(--diff-blue);
-}
-
-.border-l-yellow, .border-x-yellow, .border-yellow {
-  border-left-color: var(--yellow);
-}
-
-.border-l-transparent, .border-x-transparent, .border-transparent {
-  border-left-color: var(--transparent);
-}
-
-.border-l-bg2, .border-x-bg2, .border-bg2 {
-  border-left-color: var(--bg2);
-}
-
-.border-l-bg-red, .border-x-bg-red, .border-bg-red {
-  border-left-color: var(--bg-red);
-}
-
-.border-l-fg, .border-x-fg, .border-fg {
-  border-left-color: var(--fg);
-}
-
-.border-l-grey, .border-x-grey, .border-grey {
-  border-left-color: var(--grey);
+.border-l-bg3, .border-x-bg3, .border-bg3 {
+  border-left-color: var(--bg3);
 }
 
 .border-l-bg-blue, .border-x-bg-blue, .border-bg-blue {
@@ -865,6 +754,38 @@ li:before {
   border-left-color: var(--bg-green);
 }
 
+.border-l-black, .border-x-black, .border-black {
+  border-left-color: var(--black);
+}
+
+.border-l-green, .border-x-green, .border-green {
+  border-left-color: var(--green);
+}
+
+.border-l-bg2, .border-x-bg2, .border-bg2 {
+  border-left-color: var(--bg2);
+}
+
+.border-l-fg, .border-x-fg, .border-fg {
+  border-left-color: var(--fg);
+}
+
+.border-l-grey-dim, .border-x-grey-dim, .border-grey-dim {
+  border-left-color: var(--grey-dim);
+}
+
+.border-l-orange, .border-x-orange, .border-orange {
+  border-left-color: var(--orange);
+}
+
+.border-l-red, .border-x-red, .border-red {
+  border-left-color: var(--red);
+}
+
+.border-l-transparent, .border-x-transparent, .border-transparent {
+  border-left-color: var(--transparent);
+}
+
 .border-l-diff-red, .border-x-diff-red, .border-diff-red {
   border-left-color: var(--diff-red);
 }
@@ -873,8 +794,20 @@ li:before {
   border-left-color: var(--diff-yellow);
 }
 
+.border-l-yellow, .border-x-yellow, .border-yellow {
+  border-left-color: var(--yellow);
+}
+
 .border-l-inherit, .border-x-inherit, .border-inherit {
   border-left-color: var(--inherit);
+}
+
+.border-l-bg4, .border-x-bg4, .border-bg4 {
+  border-left-color: var(--bg4);
+}
+
+.border-l-bg-red, .border-x-bg-red, .border-bg-red {
+  border-left-color: var(--bg-red);
 }
 
 .border-l-solid, .border-x-solid, .border-solid {
@@ -897,6 +830,46 @@ li:before {
   padding-right: 0;
 }
 
+.border-r-bg4, .border-x-bg4, .border-bg4 {
+  border-right-color: var(--bg4);
+}
+
+.border-r-bg-red, .border-x-bg-red, .border-bg-red {
+  border-right-color: var(--bg-red);
+}
+
+.border-r-blue, .border-x-blue, .border-blue {
+  border-right-color: var(--blue);
+}
+
+.border-r-diff-blue, .border-x-diff-blue, .border-diff-blue {
+  border-right-color: var(--diff-blue);
+}
+
+.border-r-diff-green, .border-x-diff-green, .border-diff-green {
+  border-right-color: var(--diff-green);
+}
+
+.border-r-grey, .border-x-grey, .border-grey {
+  border-right-color: var(--grey);
+}
+
+.border-r-purple, .border-x-purple, .border-purple {
+  border-right-color: var(--purple);
+}
+
+.border-r-bg0, .border-x-bg0, .border-bg0 {
+  border-right-color: var(--bg0);
+}
+
+.border-r-bg1, .border-x-bg1, .border-bg1 {
+  border-right-color: var(--bg1);
+}
+
+.border-r-bg3, .border-x-bg3, .border-bg3 {
+  border-right-color: var(--bg3);
+}
+
 .border-r-bg-blue, .border-x-bg-blue, .border-bg-blue {
   border-right-color: var(--bg-blue);
 }
@@ -909,32 +882,20 @@ li:before {
   border-right-color: var(--bg-green);
 }
 
-.border-r-diff-red, .border-x-diff-red, .border-diff-red {
-  border-right-color: var(--diff-red);
-}
-
-.border-r-diff-yellow, .border-x-diff-yellow, .border-diff-yellow {
-  border-right-color: var(--diff-yellow);
-}
-
-.border-r-inherit, .border-x-inherit, .border-inherit {
-  border-right-color: var(--inherit);
-}
-
-.border-r-bg3, .border-x-bg3, .border-bg3 {
-  border-right-color: var(--bg3);
-}
-
 .border-r-black, .border-x-black, .border-black {
   border-right-color: var(--black);
 }
 
-.border-r-diff-green, .border-x-diff-green, .border-diff-green {
-  border-right-color: var(--diff-green);
-}
-
 .border-r-green, .border-x-green, .border-green {
   border-right-color: var(--green);
+}
+
+.border-r-bg2, .border-x-bg2, .border-bg2 {
+  border-right-color: var(--bg2);
+}
+
+.border-r-fg, .border-x-fg, .border-fg {
+  border-right-color: var(--fg);
 }
 
 .border-r-grey-dim, .border-x-grey-dim, .border-grey-dim {
@@ -945,56 +906,28 @@ li:before {
   border-right-color: var(--orange);
 }
 
-.border-r-purple, .border-x-purple, .border-purple {
-  border-right-color: var(--purple);
-}
-
 .border-r-red, .border-x-red, .border-red {
   border-right-color: var(--red);
-}
-
-.border-r-bg0, .border-x-bg0, .border-bg0 {
-  border-right-color: var(--bg0);
-}
-
-.border-r-bg1, .border-x-bg1, .border-bg1 {
-  border-right-color: var(--bg1);
-}
-
-.border-r-bg4, .border-x-bg4, .border-bg4 {
-  border-right-color: var(--bg4);
-}
-
-.border-r-blue, .border-x-blue, .border-blue {
-  border-right-color: var(--blue);
-}
-
-.border-r-diff-blue, .border-x-diff-blue, .border-diff-blue {
-  border-right-color: var(--diff-blue);
-}
-
-.border-r-yellow, .border-x-yellow, .border-yellow {
-  border-right-color: var(--yellow);
 }
 
 .border-r-transparent, .border-x-transparent, .border-transparent {
   border-right-color: var(--transparent);
 }
 
-.border-r-bg2, .border-x-bg2, .border-bg2 {
-  border-right-color: var(--bg2);
+.border-r-diff-red, .border-x-diff-red, .border-diff-red {
+  border-right-color: var(--diff-red);
 }
 
-.border-r-bg-red, .border-x-bg-red, .border-bg-red {
-  border-right-color: var(--bg-red);
+.border-r-diff-yellow, .border-x-diff-yellow, .border-diff-yellow {
+  border-right-color: var(--diff-yellow);
 }
 
-.border-r-fg, .border-x-fg, .border-fg {
-  border-right-color: var(--fg);
+.border-r-yellow, .border-x-yellow, .border-yellow {
+  border-right-color: var(--yellow);
 }
 
-.border-r-grey, .border-x-grey, .border-grey {
-  border-right-color: var(--grey);
+.border-r-inherit, .border-x-inherit, .border-inherit {
+  border-right-color: var(--inherit);
 }
 
 .border-r-solid, .border-x-solid, .border-solid {
@@ -1003,6 +936,126 @@ li:before {
 
 .border-r-dashed, .border-x-dashed, .border-dashed {
   border-right-style: dashed;
+}
+
+.border-t-0, .border-y-0, .border-0 {
+  border-top: 0px solid var(--grey-dim);
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.border-t, .border-y, .border {
+  border-top: 2px solid var(--grey-dim);
+  margin-top: calc((var(--row) - 2px) / 2);
+  padding-top: calc((var(--row) - 2px) / 2);
+}
+
+.border-t-black, .border-y-black, .border-black {
+  border-top-color: var(--black);
+}
+
+.border-t-green, .border-y-green, .border-green {
+  border-top-color: var(--green);
+}
+
+.border-t-bg2, .border-y-bg2, .border-bg2 {
+  border-top-color: var(--bg2);
+}
+
+.border-t-fg, .border-y-fg, .border-fg {
+  border-top-color: var(--fg);
+}
+
+.border-t-grey-dim, .border-y-grey-dim, .border-grey-dim {
+  border-top-color: var(--grey-dim);
+}
+
+.border-t-orange, .border-y-orange, .border-orange {
+  border-top-color: var(--orange);
+}
+
+.border-t-red, .border-y-red, .border-red {
+  border-top-color: var(--red);
+}
+
+.border-t-transparent, .border-y-transparent, .border-transparent {
+  border-top-color: var(--transparent);
+}
+
+.border-t-diff-red, .border-y-diff-red, .border-diff-red {
+  border-top-color: var(--diff-red);
+}
+
+.border-t-diff-yellow, .border-y-diff-yellow, .border-diff-yellow {
+  border-top-color: var(--diff-yellow);
+}
+
+.border-t-yellow, .border-y-yellow, .border-yellow {
+  border-top-color: var(--yellow);
+}
+
+.border-t-inherit, .border-y-inherit, .border-inherit {
+  border-top-color: var(--inherit);
+}
+
+.border-t-bg4, .border-y-bg4, .border-bg4 {
+  border-top-color: var(--bg4);
+}
+
+.border-t-bg-red, .border-y-bg-red, .border-bg-red {
+  border-top-color: var(--bg-red);
+}
+
+.border-t-blue, .border-y-blue, .border-blue {
+  border-top-color: var(--blue);
+}
+
+.border-t-diff-blue, .border-y-diff-blue, .border-diff-blue {
+  border-top-color: var(--diff-blue);
+}
+
+.border-t-diff-green, .border-y-diff-green, .border-diff-green {
+  border-top-color: var(--diff-green);
+}
+
+.border-t-grey, .border-y-grey, .border-grey {
+  border-top-color: var(--grey);
+}
+
+.border-t-purple, .border-y-purple, .border-purple {
+  border-top-color: var(--purple);
+}
+
+.border-t-bg0, .border-y-bg0, .border-bg0 {
+  border-top-color: var(--bg0);
+}
+
+.border-t-bg1, .border-y-bg1, .border-bg1 {
+  border-top-color: var(--bg1);
+}
+
+.border-t-bg3, .border-y-bg3, .border-bg3 {
+  border-top-color: var(--bg3);
+}
+
+.border-t-bg-blue, .border-y-bg-blue, .border-bg-blue {
+  border-top-color: var(--bg-blue);
+}
+
+.border-t-bg-dim, .border-y-bg-dim, .border-bg-dim {
+  border-top-color: var(--bg-dim);
+}
+
+.border-t-bg-green, .border-y-bg-green, .border-bg-green {
+  border-top-color: var(--bg-green);
+}
+
+.border-t-solid, .border-y-solid, .border-solid {
+  border-top-style: solid;
+}
+
+.border-t-dashed, .border-y-dashed, .border-dashed {
+  border-top-style: dashed;
 }
 
 .border-br-rounded-0, .border-b-rounded-0, .border-r-rounded-0, .border-rounded-0 {
@@ -1021,14 +1074,6 @@ li:before {
   border-bottom-left-radius: 0px;
 }
 
-.border-bl-rounded-4, .border-b-rounded-4, .border-l-rounded-4, .border-rounded-4 {
-  border-bottom-left-radius: 4px;
-}
-
-.border-br-rounded-4, .border-b-rounded-4, .border-r-rounded-4, .border-rounded-4 {
-  border-bottom-right-radius: 4px;
-}
-
 .border-tl-rounded-4, .border-t-rounded-4, .border-l-rounded-4, .border-rounded-4 {
   border-top-left-radius: 4px;
 }
@@ -1037,21 +1082,45 @@ li:before {
   border-top-right-radius: 4px;
 }
 
+.border-bl-rounded-4, .border-b-rounded-4, .border-l-rounded-4, .border-rounded-4 {
+  border-bottom-left-radius: 4px;
+}
+
+.border-br-rounded-4, .border-b-rounded-4, .border-r-rounded-4, .border-rounded-4 {
+  border-bottom-right-radius: 4px;
+}
+
+/* MERGED BORDERS
+ * ====================
+ * These utilities are essentially the eqivalent of `-m-1` to use alongside border classes.
+ * They are offered as convenience classes to combine containers with adjacent borders.
+ * The alternative to this would be to nest the bordered containers in something else,
+ * and apply the negative margins to the outer elements; but this can have bad side-effects
+ * in more complex layouts, in addition to just complicate things that should be simple.
+ * WARNING: These classes will break the grid unless used together with the corresponding borders
+ */
+
 .border-merge-t, .border-merge-y, .border-merge {
-  margin-top: calc((var(--row) - 2px) / 2 - var(--row));
+  margin-top: calc((var(--row) + 2px) / -2);
 }
 
 .border-merge-b, .border-merge-y, .border-merge {
-  margin-bottom: calc((var(--row) - 2px) / 2 - var(--row));
+  margin-bottom: calc((var(--row) + 2px) / -2);
 }
 
 .border-merge-l, .border-merge-x, .border-merge {
-  margin-left: calc((var(--col) - 2px) / 2 - var(--col));
+  margin-left: calc((var(--col) + 2px) / -2);
 }
 
 .border-merge-r, .border-merge-x, .border-merge {
-  margin-right: calc((var(--col) - 2px) / 2 - var(--col));
+  margin-right: calc((var(--col) + 2px) / -2);
 }
+
+/* WIDTHS & HEIGHTS
+ * ====================
+ * A collection of width and height utilities.
+ * Each option comes with a `min-` and `max-` variant.
+ */
 
 .w-0 {
   width: calc(var(--col) * 0);
@@ -1340,6 +1409,12 @@ li:before {
 .min-h-120 {
   min-height: calc(var(--row) * 120);
 }
+
+/* POSITIONING
+ * ====================
+ * Position, display, and visibility (including z-index).
+ * Also including some `top`, `bottom`, `left`, and `right` options.
+ */
 
 .static {
   position: static;

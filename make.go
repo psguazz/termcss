@@ -97,6 +97,12 @@ func rule(selector string, declarations []string) string {
 	return fmt.Sprintf("%s {\n  %s\n}\n\n", selector, block)
 }
 
+func docs(section string, lines []string) string {
+	title := fmt.Sprintf("/* %s\n * ====================", strings.ToUpper(section))
+	description := strings.Join(lines, "\n * ")
+	return fmt.Sprintf("%s\n * %s\n */\n\n", title, description)
+}
+
 func termcss() string {
 	var css strings.Builder
 
@@ -122,6 +128,12 @@ func variables() string {
 		colors = append(colors, colorVar)
 	}
 
+	css.WriteString(docs("Variables", []string{
+		"Setting up some variables used throughout the styles:",
+		"- All the colors. These come from Sonokai because it's awesome.",
+		"- Font size, line height, row width. The Grid.",
+	}))
+
 	css.WriteString(rule("html", colors))
 
 	css.WriteString(rule("html", []string{
@@ -141,13 +153,19 @@ func variables() string {
 func foundation() string {
 	var css strings.Builder
 
+	css.WriteString(docs("Foundation", []string{
+		"Some default properties that allow us to apply the theme and guarantee grid alignment.",
+		"- The list elements are a bit opinionated.",
+		"- We _need_ `content-box` to enforce the grid when applying widths and heights to items with borders",
+	}))
+
 	css.WriteString(rule("*, *::before, *::after", []string{
 		declaration("padding", "0"),
 		declaration("margin", "0"),
 		declaration("border", "0"),
 		declaration("font-size", "inherit"),
 		declaration("color", "inherit"),
-		declaration("background-color", "inherit"),
+		declaration("background-color", "none"),
 		declaration("font-family", "inherit"),
 		declaration("box-sizing", "content-box"),
 	}))
@@ -182,6 +200,12 @@ func typography() string {
 	var css strings.Builder
 
 	sizes := []int{1, 2, 3}
+
+	css.WriteString(docs("Typography", []string{
+		"Basic text transofrmations: weight, style, whitespace, case.",
+		"Size is also an option. It's definitely cheating a bit, since terminals don't have that luxury,",
+		"but it's nice to have and is still guaranteed to be aligned.",
+	}))
 
 	for _, size := range sizes {
 		selector := fmt.Sprintf(".text-%d", size)
@@ -231,6 +255,10 @@ func typography() string {
 func colors() string {
 	var css strings.Builder
 
+	css.WriteString(docs("Colors", []string{
+		"Utilities to apply the theme colors to text and background.",
+	}))
+
 	for name := range palette {
 		css.WriteString(rule(fmt.Sprintf(".text-%s", name), []string{
 			declaration("color", fmt.Sprintf("var(--%s)", name)),
@@ -247,6 +275,11 @@ func colors() string {
 
 func flex() string {
 	var css strings.Builder
+
+	css.WriteString(docs("Flex", []string{
+		"Flex-related utilities. Still WIP.",
+		"Note that some things like `justify-between will not be available unless they can be guaranteed to _always_ respect the grid.",
+	}))
 
 	css.WriteString(rule(".flex-row", []string{
 		declaration("display", "flex"),
@@ -271,6 +304,12 @@ func flex() string {
 
 func spacing() string {
 	var css strings.Builder
+
+	css.WriteString(docs("Margin & Padding", []string{
+		"Applying margin and padding -- specific sides, x and y, all sides.",
+		"All the sizes are grid-aligned.",
+		"Margins are also negative.",
+	}))
 
 	spaces := map[string]string{
 		"p": "padding",
@@ -308,6 +347,12 @@ func spacing() string {
 		}
 	}
 
+	css.WriteString(docs("Margin Auto", []string{
+		"This is incuded for the sake of creating decent page layouts.",
+		"It's fine to use this on the root element, but anywhere else",
+		"it might break the grid.",
+	}))
+
 	for selSide, propSide := range sides {
 		combo := sideCombos[selSide]
 
@@ -328,6 +373,17 @@ func spacing() string {
 
 func border() string {
 	var css strings.Builder
+
+	css.WriteString(docs("Borders", []string{
+		"Applying borders -- specific sides, x and y, all sides.",
+		"Colors, style, and radius can be changed.",
+		"The border width cannot be chosen; it's just yes or no.",
+		"Borders are applied along with a specific combination of margin and padding so that",
+		"they take a full extra row/column and remain aligned grid.",
+		"These half-paddings are the reason we need `content-box`.",
+		"Borders are defined _after_ margins and paddings, meaning that a bordered item cannot have additional margin or padding.",
+		"This is, again, to enforce grid alignment at all times",
+	}))
 
 	radiuses := []int{0, 4}
 	styles := []string{"solid", "dashed"}
@@ -405,6 +461,15 @@ func border() string {
 		}
 	}
 
+	css.WriteString(docs("Merged Borders", []string{
+		"These utilities are essentially the eqivalent of `-m-1` to use alongside border classes.",
+		"They are offered as convenience classes to combine containers with adjacent borders.",
+		"The alternative to this would be to nest the bordered containers in something else,",
+		"and apply the negative margins to the outer elements; but this can have bad side-effects",
+		"in more complex layouts, in addition to just complicate things that should be simple.",
+		"WARNING: These classes will break the grid unless used together with the corresponding borders",
+	}))
+
 	for selSide, propSide := range sides {
 		combo := sideCombos[selSide]
 
@@ -413,7 +478,7 @@ func border() string {
 		selFull := ".border-merge"
 
 		selector := fmt.Sprintf("%s, %s, %s", selBase, selCombo, selFull)
-		space := fmt.Sprintf("calc((var(--%s) - %dpx) / 2 - var(--%s))", dims[combo], widths[""], dims[combo])
+		space := fmt.Sprintf("calc((var(--%s) + %dpx) / -2)", dims[combo], widths[""])
 
 		css.WriteString(rule(selector, []string{
 			declaration("margin-"+propSide, space),
@@ -426,6 +491,11 @@ func border() string {
 
 func sizing() string {
 	var css strings.Builder
+
+	css.WriteString(docs("Widths & Heights", []string{
+		"A collection of width and height utilities.",
+		"Each option comes with a `min-` and `max-` variant.",
+	}))
 
 	rules := map[string]string{
 		"w": "width",
@@ -452,6 +522,11 @@ func sizing() string {
 
 func positioning() string {
 	var css strings.Builder
+
+	css.WriteString(docs("Positioning", []string{
+		"Position, display, and visibility (including z-index).",
+		"Also including some `top`, `bottom`, `left`, and `right` options.",
+	}))
 
 	positions := []string{"static", "fixed", "absolute", "relative", "sticky"}
 	for _, position := range positions {

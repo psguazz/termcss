@@ -57,3 +57,10 @@ trim something. If you have `go` installed, just run it:
 ```sh
 go run .
 ```
+
+## Documentation
+
+Most of this should already feel familiar if you ever used Tailwind. For an
+actual list of references, please refer to the CSS output directly; it's simple
+enough to follow, and there are some easy-to-grep comments that add some
+information and details.

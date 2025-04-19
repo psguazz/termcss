@@ -183,11 +183,6 @@ func typography() string {
 
 	sizes := []int{1, 2, 3}
 
-	css.WriteString(rule(".text-0\\.5", []string{
-		declaration("font-size", "calc(var(--base-size) * 0.5)"),
-		declaration("line-height", "calc(var(--row) * 1)"),
-	}))
-
 	for _, size := range sizes {
 		selector := fmt.Sprintf(".text-%d", size)
 

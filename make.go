@@ -49,15 +49,27 @@ var palette = map[string]string{
 var axes = []string{"x", "y"}
 
 var sides = map[string][]string{
-	"x": {"t", "b"},
-	"y": {"l", "r"},
+	"":  {"t", "b", "l", "r"},
+	"x": {"l", "r"},
+	"y": {"t", "b"},
+	"t": {"t"},
+	"b": {"b"},
+	"l": {"l"},
+	"r": {"r"},
 }
 
 var corners = map[string][]string{
-	"t": {"tl", "tr"},
-	"b": {"bl", "br"},
-	"l": {"tl", "bl"},
-	"r": {"tr", "br"},
+	"":   {"tl", "tr", "bl", "br"},
+	"x":  {"tl", "tr", "bl", "br"},
+	"y":  {"tl", "tr", "bl", "br"},
+	"t":  {"tl", "tr"},
+	"b":  {"bl", "br"},
+	"l":  {"tl", "bl"},
+	"r":  {"tr", "br"},
+	"tl": {"tl"},
+	"tr": {"tr"},
+	"bl": {"bl"},
+	"br": {"br"},
 }
 
 var (
@@ -108,6 +120,14 @@ func docs(section string, lines []string) string {
 	title := fmt.Sprintf("/* %s\n * ====================", strings.ToUpper(section))
 	description := strings.Join(lines, "\n * ")
 	return fmt.Sprintf("%s\n * %s\n */\n\n", title, description)
+}
+
+func stringMap(input []string, f func(string) string) []string {
+	output := make([]string, len(input))
+	for i, v := range input {
+		output[i] = f(v)
+	}
+	return output
 }
 
 func termcss() string {
@@ -328,38 +348,33 @@ func spacing() string {
 		"m": append(negativeSpaces, positiveSpaces...),
 	}
 
-	selector := func(base string, n int) string {
-		if n > 0 {
-			return fmt.Sprintf(".%s-%d", base, n)
+	addSpacing := func(selName string, baseMod string, size int) {
+		selector := selName + baseMod
+		if size > 0 {
+			selector = fmt.Sprintf(".%s-%d", selector, size)
 		} else {
-			return fmt.Sprintf(".-%s-%d", base, -n)
+			selector = fmt.Sprintf(".-%s-%d", selector, -size)
 		}
+
+		css.WriteString(rule(selector, stringMap(sides[baseMod], func(mod string) string {
+			property := fmt.Sprintf("%s-%s", spaces[selName], props[mod])
+			return declaration(property, grid(dims[mod], size))
+		})))
 	}
 
-	for selName, propName := range spaces {
+	for selName := range spaces {
 		for _, size := range sizes[selName] {
-			css.WriteString(rule(selector(selName, size), []string{
-				declaration(propName+"-x", grid("col", size)),
-				declaration(propName+"-y", grid("row", size)),
-			}))
+			addSpacing(selName, "", size)
 		}
 
 		for _, axis := range axes {
 			for _, size := range sizes[selName] {
-				selAxis := fmt.Sprintf("%s%s", selName, axis)
-				propAxis := fmt.Sprintf("%s-%s", propName, props[axis])
-				css.WriteString(rule(selector(selAxis, size), []string{
-					declaration(propAxis, grid(dims[axis], size)),
-				}))
+				addSpacing(selName, axis, size)
 			}
 
 			for _, side := range sides[axis] {
 				for _, size := range sizes[selName] {
-					selAxis := fmt.Sprintf("%s%s", selName, axis)
-					propAxis := fmt.Sprintf("%s-%s", propName, props[axis])
-					css.WriteString(rule(selector(selAxis, size), []string{
-						declaration(propAxis, grid(dims[side], size)),
-					}))
+					addSpacing(selName, side, size)
 				}
 			}
 		}
@@ -375,10 +390,10 @@ func spacing() string {
 		declaration("margin", "auto"),
 	}))
 	css.WriteString(rule(".mx-auto", []string{
-		declaration("margin-x", "auto"),
+		declaration("margin-inline", "auto"),
 	}))
 	css.WriteString(rule(".my-auto", []string{
-		declaration("margin-y", "auto"),
+		declaration("margin-block", "auto"),
 	}))
 
 	return css.String()
@@ -415,66 +430,91 @@ func borders() string {
 		"r": halfCol,
 	}
 
-	addBorders := func(selMod string, propMod string) {
-		css.WriteString(rule(".border"+selMod, []string{
-			declaration("border-"+props[propMod], border),
-			declaration("margin-"+props[propMod], halfDims[propMod]),
-			declaration("padding-"+props[propMod], halfDims[propMod]),
-		}))
-		css.WriteString(rule(".border"+selMod+"-0", []string{
-			declaration("border-"+props[propMod], "0"),
-			declaration("margin-"+props[propMod], "0"),
-			declaration("padding-"+props[propMod], "0"),
-		}))
+	addBorders := func(baseMod string) {
+		baseSel := ".border"
+		if baseMod != "" {
+			baseSel = fmt.Sprintf("%s-%s", baseSel, baseMod)
+		}
+
+		borderDecl := stringMap(sides[baseMod], func(mod string) string {
+			property := fmt.Sprintf("border-%s", props[mod])
+			return declaration(property, border)
+		})
+
+		marginDecl := stringMap(sides[baseMod], func(mod string) string {
+			property := fmt.Sprintf("margin-%s", props[mod])
+			return declaration(property, halfDims[mod])
+		})
+
+		paddingDecl := stringMap(sides[baseMod], func(mod string) string {
+			property := fmt.Sprintf("padding-%s", props[mod])
+			return declaration(property, halfDims[mod])
+		})
+
+		css.WriteString(rule(baseSel, append(append(borderDecl, marginDecl...), paddingDecl...)))
+
+		borderDeclNo := stringMap(sides[baseMod], func(mod string) string {
+			property := fmt.Sprintf("border-%s", props[mod])
+			return declaration(property, "0")
+		})
+
+		marginDeclNo := stringMap(sides[baseMod], func(mod string) string {
+			property := fmt.Sprintf("margin-%s", props[mod])
+			return declaration(property, "0")
+		})
+
+		paddingDeclNo := stringMap(sides[baseMod], func(mod string) string {
+			property := fmt.Sprintf("padding-%s", props[mod])
+			return declaration(property, "0")
+		})
+
+		css.WriteString(rule(baseSel+"-0", append(append(borderDeclNo, marginDeclNo...), paddingDeclNo...)))
 
 		for color := range palette {
-			selector := fmt.Sprintf(".border%s-%s", selMod, color)
-			property := fmt.Sprintf("border-%s-color", props[propMod])
+			selector := fmt.Sprintf("%s-%s", baseSel, color)
 			value := fmt.Sprintf("var(--%s)", color)
 
-			css.WriteString(rule(selector, []string{
-				declaration(property, value),
-			}))
+			css.WriteString(rule(selector, stringMap(sides[baseMod], func(mod string) string {
+				property := fmt.Sprintf("border-%s-color", props[mod])
+				return declaration(property, value)
+			})))
 		}
 
 		for _, style := range styles {
-			selector := fmt.Sprintf(".border%s-%s", selMod, style)
-			property := fmt.Sprintf("border-%s-color", props[propMod])
+			selector := fmt.Sprintf("%s-%s", baseSel, style)
 
-			css.WriteString(rule(selector, []string{
-				declaration(property, style),
-			}))
+			css.WriteString(rule(selector, stringMap(sides[baseMod], func(mod string) string {
+				property := fmt.Sprintf("border-%s-color", props[mod])
+				return declaration(property, style)
+			})))
 		}
 	}
 
-	addCorners := func(propMod string) {
-		selBase := "border"
-		propBase := "border"
-		if propMod != "" {
-			selBase = fmt.Sprintf("%s-%s", selBase, props[propMod])
-			propBase = fmt.Sprintf("%s-%s", propBase, props[propMod])
+	addCorners := func(baseMod string) {
+		baseSel := ".border"
+		if baseMod != "" {
+			baseSel = fmt.Sprintf("%s-%s", baseSel, baseMod)
 		}
 
-		for mod, radius := range radiuses {
-			selector := fmt.Sprintf(".%s-%s", selBase, mod)
-			property := fmt.Sprintf("%s-radius", propBase)
+		for selMod, radius := range radiuses {
+			selector := fmt.Sprintf("%s-%s", baseSel, selMod)
 
-			css.WriteString(rule(selector, []string{
-				declaration(property, radius),
-			}))
+			css.WriteString(rule(selector, stringMap(corners[baseMod], func(mod string) string {
+				property := fmt.Sprintf("border-%s-color", props[mod])
+				return declaration(property, radius)
+			})))
 		}
 	}
 
-	addBorders("", "x")
-	addBorders("", "y")
+	addBorders("")
 	addCorners("")
 
 	for _, axis := range axes {
-		addBorders("-"+axis, axis)
+		addBorders(axis)
 		addCorners(axis)
 
 		for _, side := range sides[axis] {
-			addBorders("-"+side, side)
+			addBorders(side)
 			addCorners(side)
 
 			for _, corner := range corners[side] {
@@ -492,21 +532,26 @@ func borders() string {
 		"WARNING: These classes will break the grid unless used together with the corresponding borders",
 	}))
 
-	addMerges := func(selMod string, propMod string) {
-		space := fmt.Sprintf("calc((var(--%s) + %dpx) / -2)", dims[propMod], borderWidth)
-		css.WriteString(rule(".border-merge"+selMod, []string{
-			declaration("margin-"+props[propMod], space),
-		}))
+	addMerges := func(baseMod string) {
+		selector := ".border-merge"
+		if baseMod != "" {
+			selector = fmt.Sprintf("%s-%s", selector, baseMod)
+		}
+
+		css.WriteString(rule(selector, stringMap(sides[baseMod], func(mod string) string {
+			property := "margin-" + props[mod]
+			value := fmt.Sprintf("calc((var(--%s) + %dpx) / -2)", dims[mod], borderWidth)
+			return declaration(property, value)
+		})))
 	}
 
-	addMerges("", "x")
-	addMerges("", "y")
+	addMerges("")
 
 	for _, axis := range axes {
-		addMerges("-"+axis, axis)
+		addMerges(axis)
 
 		for _, side := range sides[axis] {
-			addMerges("-"+side, side)
+			addMerges(side)
 		}
 	}
 
@@ -571,7 +616,7 @@ func positioning() string {
 	for _, axis := range axes {
 		for _, side := range sides[axis] {
 			for _, offset := range offsets {
-				selector := fmt.Sprintf(".%s-%d", props[side], offset)
+				selector := fmt.Sprintf(".%s-%d", side, offset)
 				value := fmt.Sprintf("calc(var(--%s) * %d)", dims[side], offset)
 
 				css.WriteString(rule(selector, []string{

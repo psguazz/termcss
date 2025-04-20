@@ -275,6 +275,7 @@ func typography() string {
 	css.WriteString(rule(".italic", []string{
 		declaration("font-style", "italic"),
 	}))
+
 	css.WriteString(rule(".not-italic", []string{
 		declaration("font-style", "normal"),
 	}))
@@ -503,7 +504,7 @@ func borders() string {
 			selector := fmt.Sprintf("%s-%s", baseSel, selMod)
 
 			css.WriteString(rule(selector, stringMap(corners[baseMod], func(mod string) string {
-				property := fmt.Sprintf("border-%s-color", props[mod])
+				property := fmt.Sprintf("border-%s-radius", props[mod])
 				return declaration(property, radius)
 			})))
 		}

@@ -488,7 +488,7 @@ func borders() string {
 			selector := fmt.Sprintf("%s-%s", baseSel, style)
 
 			css.WriteString(rule(selector, stringMap(sides[baseMod], func(mod string) string {
-				property := fmt.Sprintf("border-%s-color", props[mod])
+				property := fmt.Sprintf("border-%s-style", props[mod])
 				return declaration(property, style)
 			})))
 		}

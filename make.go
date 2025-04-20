@@ -46,39 +46,18 @@ var palette = map[string]string{
 	"inherit":     "inherit",
 }
 
-var sides = map[string]string{
-	"t": "top",
-	"b": "bottom",
-	"l": "left",
-	"r": "right",
+var axes = []string{"x", "y"}
+
+var sides = map[string][]string{
+	"x": {"t", "b"},
+	"y": {"l", "r"},
 }
 
-var corners = map[string]string{
-	"tl": "top-left",
-	"tr": "top-right",
-	"bl": "bottom-left",
-	"br": "bottom-right",
-}
-
-var sideCombos = map[string]string{
-	"t": "y",
-	"b": "y",
-	"l": "x",
-	"r": "x",
-}
-
-var cornerCombos = map[string][]string{
-	"tl": {"t", "l"},
-	"tr": {"t", "r"},
-	"bl": {"b", "l"},
-	"br": {"b", "r"},
-}
-
-var dims = map[string]string{
-	"x": "col",
-	"y": "row",
-	"h": "row",
-	"w": "col",
+var corners = map[string][]string{
+	"t": {"tl", "tr"},
+	"b": {"bl", "br"},
+	"l": {"tl", "bl"},
+	"r": {"tr", "br"},
 }
 
 var (
@@ -87,6 +66,34 @@ var (
 )
 
 var sizes = []int{0, 1, 2, 4, 8, 12, 20, 32, 40, 80, 100, 120}
+
+var props = map[string]string{
+	"x":  "x",
+	"y":  "y",
+	"t":  "top",
+	"b":  "bottom",
+	"l":  "left",
+	"r":  "right",
+	"tl": "top-left",
+	"tr": "top-right",
+	"bl": "bottom-left",
+	"br": "bottom-right",
+}
+
+var dims = map[string]string{
+	"x": "col",
+	"y": "row",
+	"t": "row",
+	"b": "row",
+	"l": "col",
+	"r": "col",
+	"h": "row",
+	"w": "col",
+}
+
+func grid(dim string, n int) string {
+	return fmt.Sprintf("calc(var(--%s) * %d)", dim, n)
+}
 
 func declaration(property, value string) string {
 	return fmt.Sprintf("%s: %s;", property, value)
@@ -112,7 +119,7 @@ func termcss() string {
 	css.WriteString(colors())
 	css.WriteString(flex())
 	css.WriteString(spacing())
-	css.WriteString(border())
+	css.WriteString(borders())
 	css.WriteString(sizing())
 	css.WriteString(positioning())
 
@@ -321,28 +328,39 @@ func spacing() string {
 		"m": append(negativeSpaces, positiveSpaces...),
 	}
 
+	selector := func(base string, n int) string {
+		if n > 0 {
+			return fmt.Sprintf(".%s-%d", base, n)
+		} else {
+			return fmt.Sprintf(".-%s-%d", base, -n)
+		}
+	}
+
 	for selName, propName := range spaces {
 		for _, size := range sizes[selName] {
-			for selSide, propSide := range sides {
-				combo := sideCombos[selSide]
-				sign := ""
-				number := size
-				if size < 0 {
-					sign = "-"
-					number = -size
-				}
+			css.WriteString(rule(selector(selName, size), []string{
+				declaration(propName+"-x", grid("col", size)),
+				declaration(propName+"-y", grid("row", size)),
+			}))
+		}
 
-				selBase := fmt.Sprintf(".%s-%d", sign+selName+selSide, number)
-				selCombo := fmt.Sprintf(".%s-%d", sign+selName+combo, number)
-				selFull := fmt.Sprintf(".%s-%d", sign+selName, number)
-
-				selector := fmt.Sprintf("%s, %s, %s", selBase, selCombo, selFull)
-				property := fmt.Sprintf("%s-%s", propName, propSide)
-				value := fmt.Sprintf("calc(var(--%s) * %d)", dims[combo], size)
-
-				css.WriteString(rule(selector, []string{
-					declaration(property, value),
+		for _, axis := range axes {
+			for _, size := range sizes[selName] {
+				selAxis := fmt.Sprintf("%s%s", selName, axis)
+				propAxis := fmt.Sprintf("%s-%s", propName, props[axis])
+				css.WriteString(rule(selector(selAxis, size), []string{
+					declaration(propAxis, grid(dims[axis], size)),
 				}))
+			}
+
+			for _, side := range sides[axis] {
+				for _, size := range sizes[selName] {
+					selAxis := fmt.Sprintf("%s%s", selName, axis)
+					propAxis := fmt.Sprintf("%s-%s", propName, props[axis])
+					css.WriteString(rule(selector(selAxis, size), []string{
+						declaration(propAxis, grid(dims[side], size)),
+					}))
+				}
 			}
 		}
 	}
@@ -353,25 +371,20 @@ func spacing() string {
 		"it might break the grid.",
 	}))
 
-	for selSide, propSide := range sides {
-		combo := sideCombos[selSide]
-
-		selBase := fmt.Sprintf(".m%s-auto", selSide)
-		selCombo := fmt.Sprintf(".m%s-auto", combo)
-		selFull := ".m-auto"
-
-		selector := fmt.Sprintf("%s, %s, %s", selBase, selCombo, selFull)
-		property := fmt.Sprintf("margin-%s", propSide)
-
-		css.WriteString(rule(selector, []string{
-			declaration(property, "auto"),
-		}))
-	}
+	css.WriteString(rule(".m-auto", []string{
+		declaration("margin", "auto"),
+	}))
+	css.WriteString(rule(".mx-auto", []string{
+		declaration("margin-x", "auto"),
+	}))
+	css.WriteString(rule(".my-auto", []string{
+		declaration("margin-y", "auto"),
+	}))
 
 	return css.String()
 }
 
-func border() string {
+func borders() string {
 	var css strings.Builder
 
 	css.WriteString(docs("Borders", []string{
@@ -385,41 +398,38 @@ func border() string {
 		"This is, again, to enforce grid alignment at all times",
 	}))
 
-	radiuses := []int{0, 4}
+	borderWidth := 2
 	styles := []string{"solid", "dashed"}
-	widths := map[string]int{"": 2, "-0": 0}
+	radiuses := map[string]string{"square": "0", "rounded": "4px"}
 
-	for selSide, propSide := range sides {
-		combo := sideCombos[selSide]
+	halfRow := fmt.Sprintf("calc((var(--%s) - %dpx) / 2)", "row", borderWidth)
+	halfCol := fmt.Sprintf("calc((var(--%s) - %dpx) / 2)", "col", borderWidth)
+	border := fmt.Sprintf("%dpx solid var(--grey-dim)", borderWidth)
 
-		for selWidth, width := range widths {
-			selBase := fmt.Sprintf(".border-%s%s", selSide, selWidth)
-			selCombo := fmt.Sprintf(".border-%s%s", combo, selWidth)
-			selFull := fmt.Sprintf(".border%s", selWidth)
+	halfDims := map[string]string{
+		"x": halfCol,
+		"y": halfRow,
+		"t": halfRow,
+		"b": halfRow,
+		"l": halfCol,
+		"r": halfCol,
+	}
 
-			selector := fmt.Sprintf("%s, %s, %s", selBase, selCombo, selFull)
-			property := fmt.Sprintf("border-%s", propSide)
-			value := fmt.Sprintf("%dpx solid var(--grey-dim)", width)
-
-			space := fmt.Sprintf("calc((var(--%s) - %dpx) / 2)", dims[combo], width)
-			if width == 0 {
-				space = "0"
-			}
-
-			css.WriteString(rule(selector, []string{
-				declaration(property, value),
-				declaration("margin-"+propSide, space),
-				declaration("padding-"+propSide, space),
-			}))
-		}
+	addBorders := func(selMod string, propMod string) {
+		css.WriteString(rule(".border"+selMod, []string{
+			declaration("border-"+props[propMod], border),
+			declaration("margin-"+props[propMod], halfDims[propMod]),
+			declaration("padding-"+props[propMod], halfDims[propMod]),
+		}))
+		css.WriteString(rule(".border"+selMod+"-0", []string{
+			declaration("border-"+props[propMod], "0"),
+			declaration("margin-"+props[propMod], "0"),
+			declaration("padding-"+props[propMod], "0"),
+		}))
 
 		for color := range palette {
-			selBase := fmt.Sprintf(".border-%s-%s", selSide, color)
-			selCombo := fmt.Sprintf(".border-%s-%s", combo, color)
-			selFull := fmt.Sprintf(".border-%s", color)
-
-			selector := fmt.Sprintf("%s, %s, %s", selBase, selCombo, selFull)
-			property := fmt.Sprintf("border-%s-color", propSide)
+			selector := fmt.Sprintf(".border%s-%s", selMod, color)
+			property := fmt.Sprintf("border-%s-color", props[propMod])
 			value := fmt.Sprintf("var(--%s)", color)
 
 			css.WriteString(rule(selector, []string{
@@ -428,12 +438,8 @@ func border() string {
 		}
 
 		for _, style := range styles {
-			selBase := fmt.Sprintf(".border-%s-%s", selSide, style)
-			selCombo := fmt.Sprintf(".border-%s-%s", combo, style)
-			selFull := fmt.Sprintf(".border-%s", style)
-
-			selector := fmt.Sprintf("%s, %s, %s", selBase, selCombo, selFull)
-			property := fmt.Sprintf("border-%s-style", propSide)
+			selector := fmt.Sprintf(".border%s-%s", selMod, style)
+			property := fmt.Sprintf("border-%s-color", props[propMod])
 
 			css.WriteString(rule(selector, []string{
 				declaration(property, style),
@@ -441,23 +447,39 @@ func border() string {
 		}
 	}
 
-	for _, radius := range radiuses {
-		for selCorner, propCorner := range corners {
-			sides := cornerCombos[selCorner]
-			sideY, sideX := sides[0], sides[1]
+	addCorners := func(propMod string) {
+		selBase := "border"
+		propBase := "border"
+		if propMod != "" {
+			selBase = fmt.Sprintf("%s-%s", selBase, props[propMod])
+			propBase = fmt.Sprintf("%s-%s", propBase, props[propMod])
+		}
 
-			selBase := fmt.Sprintf(".border-%s-rounded-%d", selCorner, radius)
-			selSideY := fmt.Sprintf(".border-%s-rounded-%d", sideY, radius)
-			selSideX := fmt.Sprintf(".border-%s-rounded-%d", sideX, radius)
-			selFull := fmt.Sprintf(".border-rounded-%d", radius)
-
-			selector := fmt.Sprintf("%s, %s, %s, %s", selBase, selSideY, selSideX, selFull)
-			property := fmt.Sprintf("border-%s-radius", propCorner)
-			value := fmt.Sprintf("%dpx", radius)
+		for mod, radius := range radiuses {
+			selector := fmt.Sprintf(".%s-%s", selBase, mod)
+			property := fmt.Sprintf("%s-radius", propBase)
 
 			css.WriteString(rule(selector, []string{
-				declaration(property, value),
+				declaration(property, radius),
 			}))
+		}
+	}
+
+	addBorders("", "x")
+	addBorders("", "y")
+	addCorners("")
+
+	for _, axis := range axes {
+		addBorders("-"+axis, axis)
+		addCorners(axis)
+
+		for _, side := range sides[axis] {
+			addBorders("-"+side, side)
+			addCorners(side)
+
+			for _, corner := range corners[side] {
+				addCorners(corner)
+			}
 		}
 	}
 
@@ -470,20 +492,22 @@ func border() string {
 		"WARNING: These classes will break the grid unless used together with the corresponding borders",
 	}))
 
-	for selSide, propSide := range sides {
-		combo := sideCombos[selSide]
-
-		selBase := fmt.Sprintf(".border-merge-%s", selSide)
-		selCombo := fmt.Sprintf(".border-merge-%s", combo)
-		selFull := ".border-merge"
-
-		selector := fmt.Sprintf("%s, %s, %s", selBase, selCombo, selFull)
-		space := fmt.Sprintf("calc((var(--%s) + %dpx) / -2)", dims[combo], widths[""])
-
-		css.WriteString(rule(selector, []string{
-			declaration("margin-"+propSide, space),
+	addMerges := func(selMod string, propMod string) {
+		space := fmt.Sprintf("calc((var(--%s) + %dpx) / -2)", dims[propMod], borderWidth)
+		css.WriteString(rule(".border-merge"+selMod, []string{
+			declaration("margin-"+props[propMod], space),
 		}))
+	}
 
+	addMerges("", "x")
+	addMerges("", "y")
+
+	for _, axis := range axes {
+		addMerges("-"+axis, axis)
+
+		for _, side := range sides[axis] {
+			addMerges("-"+side, side)
+		}
 	}
 
 	return css.String()
@@ -543,15 +567,17 @@ func positioning() string {
 	}
 
 	offsets := []int{0, 1, 2, 3, 4, 6, 8, 12, 20}
-	for side, property := range sides {
-		for _, offset := range offsets {
-			dim := dims[sideCombos[side]]
-			selector := fmt.Sprintf(".%s-%d", property, offset)
-			value := fmt.Sprintf("calc(var(--%s) * %d)", dim, offset)
 
-			css.WriteString(rule(selector, []string{
-				declaration(property, value),
-			}))
+	for _, axis := range axes {
+		for _, side := range sides[axis] {
+			for _, offset := range offsets {
+				selector := fmt.Sprintf(".%s-%d", props[side], offset)
+				value := fmt.Sprintf("calc(var(--%s) * %d)", dims[side], offset)
+
+				css.WriteString(rule(selector, []string{
+					declaration(props[side], value),
+				}))
+			}
 		}
 	}
 

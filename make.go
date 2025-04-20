@@ -77,7 +77,10 @@ var (
 	negativeSpaces = []int{-2, -1}
 )
 
-var sizes = []int{0, 1, 2, 4, 8, 12, 20, 32, 40, 80, 100, 120}
+var (
+	sizes   = []int{0, 1, 2, 4, 8, 12, 20, 32, 40, 80, 100, 120}
+	offsets = []int{0, 1, 2, 3, 4, 6, 8, 12, 20}
+)
 
 var props = map[string]string{
 	"x":  "x",
@@ -610,8 +613,6 @@ func positioning() string {
 			declaration("display", display),
 		}))
 	}
-
-	offsets := []int{0, 1, 2, 3, 4, 6, 8, 12, 20}
 
 	for _, axis := range axes {
 		for _, side := range sides[axis] {

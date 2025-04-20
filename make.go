@@ -208,7 +208,7 @@ func foundation() string {
 
 	css.WriteString(rule("ul", []string{
 		declaration("list-style", "none"),
-		declaration("padding-left", "calc(var(--col) * 2)"),
+		declaration("padding-left", grid("col", 2)),
 		declaration("margin", "0"),
 	}))
 
@@ -219,7 +219,7 @@ func foundation() string {
 	css.WriteString(rule("li:before", []string{
 		declaration("content", "\"*\""),
 		declaration("position", "absolute"),
-		declaration("left", "calc(var(--col) * -2)"),
+		declaration("left", grid("col", -2)),
 		declaration("color", "var(--grey)"),
 	}))
 
@@ -241,8 +241,8 @@ func typography() string {
 		selector := fmt.Sprintf(".text-%d", size)
 
 		css.WriteString(rule(selector, []string{
-			declaration("font-size", fmt.Sprintf("calc(var(--base-size) * %d)", size)),
-			declaration("line-height", fmt.Sprintf("calc(var(--row) * %d)", size)),
+			declaration("font-size", grid("base-size", size)),
+			declaration("line-height", grid("row", size)),
 		}))
 
 	}
@@ -580,7 +580,7 @@ func sizing() string {
 		for _, mod := range mods {
 			for _, size := range sizes {
 				selector := fmt.Sprintf(".%s-%d", mod+sel, size)
-				value := fmt.Sprintf("calc(var(--%s) * %d)", dims[sel], size)
+				value := grid(dims[sel], size)
 
 				css.WriteString(rule(selector, []string{
 					declaration(mod+property, value),
@@ -618,7 +618,7 @@ func positioning() string {
 		for _, side := range sides[axis] {
 			for _, offset := range offsets {
 				selector := fmt.Sprintf(".%s-%d", side, offset)
-				value := fmt.Sprintf("calc(var(--%s) * %d)", dims[side], offset)
+				value := grid(dims[side], offset)
 
 				css.WriteString(rule(selector, []string{
 					declaration(props[side], value),

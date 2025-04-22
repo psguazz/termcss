@@ -195,7 +195,7 @@ func foundation() string {
 		declaration("border", "0"),
 		declaration("font-size", "inherit"),
 		declaration("color", "inherit"),
-		declaration("background-color", "none"),
+		declaration("background-color", "unset"),
 		declaration("font-family", "inherit"),
 		declaration("box-sizing", "content-box"),
 	}))
@@ -212,14 +212,23 @@ func foundation() string {
 		declaration("margin", "0"),
 	}))
 
-	css.WriteString(rule("li", []string{
+	css.WriteString(rule("ul>li", []string{
 		declaration("position", "relative"),
 	}))
 
-	css.WriteString(rule("li:before", []string{
+	css.WriteString(rule("ul>li:before", []string{
 		declaration("content", "\"*\""),
 		declaration("position", "absolute"),
 		declaration("left", grid("col", -2)),
+		declaration("color", "var(--grey)"),
+	}))
+
+	css.WriteString(rule("ol", []string{
+		declaration("padding-left", grid("col", 3)),
+		declaration("margin", "0"),
+	}))
+
+	css.WriteString(rule("ol>li::marker", []string{
 		declaration("color", "var(--grey)"),
 	}))
 

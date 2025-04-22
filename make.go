@@ -339,6 +339,27 @@ func flex() string {
 		declaration("flex-shrink", "1"),
 	}))
 
+	for _, size := range positiveSpaces {
+		selector := fmt.Sprintf(".gap-%d", size)
+		css.WriteString(rule(selector, []string{
+			declaration("row-gap", grid("row", size)),
+			declaration("column-gap", grid("col", size)),
+		}))
+	}
+
+	for _, size := range positiveSpaces {
+		xSelector := fmt.Sprintf(".gap-x-%d", size)
+		css.WriteString(rule(xSelector, []string{
+			declaration("column-gap", grid("col", size)),
+		}))
+
+		ySelector := fmt.Sprintf(".gap-y-%d", size)
+		css.WriteString(rule(ySelector, []string{
+			declaration("row-gap", grid("row", size)),
+		}))
+
+	}
+
 	return css.String()
 }
 

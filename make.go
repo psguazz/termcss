@@ -78,7 +78,7 @@ var (
 )
 
 var (
-	sizes   = []int{0, 1, 2, 4, 8, 12, 20, 32, 40, 80, 100, 120}
+	sizes   = []int{0, 1, 2, 4, 8, 12, 20, 32, 40, 80, 100, 109, 120}
 	offsets = []int{0, 1, 2, 3, 4, 6, 8, 12, 20}
 )
 
@@ -167,7 +167,7 @@ func variables() string {
 	css.WriteString(rule("html", colors))
 
 	css.WriteString(rule("html", []string{
-		declaration("--base-size", "14px"),
+		declaration("--base-size", "12px"),
 		declaration("--col", "calc(1rem * 0.6007142857)"),
 		declaration("--row", "calc(1rem * 1.35)"),
 	}))

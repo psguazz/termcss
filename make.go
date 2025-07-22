@@ -169,7 +169,7 @@ func variables() string {
 	css.WriteString(rule("html", []string{
 		declaration("--base-size", "12px"),
 		declaration("--col", "calc(1rem * 0.6007142857)"),
-		declaration("--row", "calc(1rem * 1.35)"),
+		declaration("--row", "calc(1rem * 1.45)"),
 	}))
 
 	css.WriteString(rule("html", []string{
@@ -198,6 +198,7 @@ func foundation() string {
 		declaration("background-color", "unset"),
 		declaration("font-family", "inherit"),
 		declaration("box-sizing", "content-box"),
+		declaration("text-decoration", "none"),
 	}))
 
 	css.WriteString(rule("body", []string{
